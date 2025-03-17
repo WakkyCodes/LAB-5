@@ -149,7 +149,7 @@ app.post('/books', (req, res) => {
 //put request - updating a book
 app.put('/books/:id', (req, res) => {
     //find book
-    const book = books.find(c => c.id == (req.params.id));
+    const book = books.find(b => b.id == (req.params.id));
     if (!book) return res.status(404).send('This Book ID cannot be found');
 
     //validate input
@@ -178,27 +178,20 @@ app.delete('/books/:id', (req, res) => {
 
 //post request - add a detail
 app.post('/books/:id/details', (req,res) => {
-    const book = books.find(c => c.id ==(req.params.id));
-    if (!book) return res.status(404).send('This Car ID cannot be found');
+    const book = books.find(b => b.id ==(req.params.id));
+    if (!book) return res.status(404).send('This Book ID cannot be found');
 
-    const {author, genre, publicationYear } = req.body;
+    
+    const existDetails = book.details[0];
+    Object.assign(existDetails, req.body)
 
-    // all fields provided
-    if (!author || !genre || !publicationYear) {
-        return res.status(400).send('All fields (title, author, genre, publicationYear) are required.');
-    }
 
-    // replace  details with the new data
-    book.details[0].author = author;
-    book.details[0].genre = genre;
-    book.details[0].publicationYear = publicationYear;
-
-    res.send(book);
+    res.status(201).send(book);
 
 });
 
 
-//delete request - delete a book spec
+//delete request - delete the details of a book
 
 app.delete('/books/:id/details/:detailId', (req,res) => {
     //find by bookid
